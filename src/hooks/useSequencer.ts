@@ -155,9 +155,8 @@ export function useSequencer({
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
-      const timeouts = uiTimeoutsRef.current;
-      timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
-      timeouts.clear();
+      uiTimeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+      uiTimeoutsRef.current.clear();
     };
   }, []);
 
