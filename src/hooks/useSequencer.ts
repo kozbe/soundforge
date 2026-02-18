@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   initAudio,
   getAudioContext,
@@ -29,6 +29,7 @@ export function useSequencer({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nextNoteTimeRef = useRef(0);
   const currentStepRef = useRef(-1);
+  const uiTimeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
   const getStepTime = useCallback((step: number) => {
     const beatTime = 60.0 / bpmRef.current / 4;
@@ -60,9 +61,11 @@ export function useSequencer({
       });
 
       const scheduledTime = nextNoteTimeRef.current;
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
+        uiTimeoutsRef.current.delete(timeoutId);
         setCurrentStep(step);
       }, (scheduledTime - ctx.currentTime) * 1000);
+      uiTimeoutsRef.current.add(timeoutId);
 
       nextNoteTimeRef.current += getStepTime(currentStepRef.current);
     }
@@ -102,9 +105,11 @@ export function useSequencer({
             });
 
             const scheduledTime = nextNoteTimeRef.current;
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
+              uiTimeoutsRef.current.delete(timeoutId);
               setCurrentStep(step);
             }, (scheduledTime - ctx.currentTime) * 1000);
+            uiTimeoutsRef.current.add(timeoutId);
 
             nextNoteTimeRef.current += getStepTime(currentStepRef.current);
           }
@@ -124,6 +129,9 @@ export function useSequencer({
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+    // Clear all pending UI update timeouts
+    uiTimeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+    uiTimeoutsRef.current.clear();
   }, []);
 
   const toggle = useCallback(() => {
@@ -133,6 +141,18 @@ export function useSequencer({
       start();
     }
   }, [start, stop]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      const timeouts = uiTimeoutsRef.current;
+      timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+      timeouts.clear();
+    };
+  }, []);
 
   return { isPlaying, currentStep, start, stop, toggle };
 }
