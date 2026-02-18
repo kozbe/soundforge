@@ -30,45 +30,46 @@ export function useSequencer({
   const nextNoteTimeRef = useRef(0);
   const currentStepRef = useRef(-1);
 
-  const getStepTime = useCallback((step: number) => {
-    const beatTime = 60.0 / bpmRef.current / 4;
-    const swingAmount = swingRef.current / 100;
-    if (step % 2 === 1) {
-      return beatTime * (1 + swingAmount * 0.5);
-    }
-    return beatTime * (1 - swingAmount * 0.25);
-  }, [bpmRef, swingRef]);
+  const getStepTime = useCallback(
+    (step: number) => {
+      const beatTime = 60.0 / bpmRef.current / 4;
+      const swingAmount = swingRef.current / 100;
+      if (step % 2 === 1) {
+        return beatTime * (1 + swingAmount * 0.5);
+      }
+      return beatTime * (1 - swingAmount * 0.25);
+    },
+    [bpmRef, swingRef],
+  );
+  //   const ctx = getAudioContext();
+  //   if (!ctx) return;
 
-  const scheduler = useCallback(() => {
-    const ctx = getAudioContext();
-    if (!ctx) return;
+  //   while (nextNoteTimeRef.current < ctx.currentTime + 0.1) {
+  //     currentStepRef.current = (currentStepRef.current + 1) % STEPS;
+  //     const step = currentStepRef.current;
 
-    while (nextNoteTimeRef.current < ctx.currentTime + 0.1) {
-      currentStepRef.current = (currentStepRef.current + 1) % STEPS;
-      const step = currentStepRef.current;
+  //     instruments.forEach((inst) => {
+  //       if (gridRef.current[inst.id][step] && !mutedRef.current[inst.id]) {
+  //         playInstrument(
+  //           inst.id,
+  //           nextNoteTimeRef.current,
+  //           step,
+  //           currentKeyRef.current,
+  //           currentScaleRef.current,
+  //         );
+  //       }
+  //     });
 
-      instruments.forEach((inst) => {
-        if (gridRef.current[inst.id][step] && !mutedRef.current[inst.id]) {
-          playInstrument(
-            inst.id,
-            nextNoteTimeRef.current,
-            step,
-            currentKeyRef.current,
-            currentScaleRef.current,
-          );
-        }
-      });
+  //     const scheduledTime = nextNoteTimeRef.current;
+  //     setTimeout(() => {
+  //       setCurrentStep(step);
+  //     }, (scheduledTime - ctx.currentTime) * 1000);
 
-      const scheduledTime = nextNoteTimeRef.current;
-      setTimeout(() => {
-        setCurrentStep(step);
-      }, (scheduledTime - ctx.currentTime) * 1000);
+  //     nextNoteTimeRef.current += getStepTime(currentStepRef.current);
+  //   }
 
-      nextNoteTimeRef.current += getStepTime(currentStepRef.current);
-    }
-
-    timerRef.current = setTimeout(scheduler, 25);
-  }, [gridRef, mutedRef, currentKeyRef, currentScaleRef, getStepTime]);
+  //   timerRef.current = setTimeout(scheduler, 25);
+  // }, [gridRef, mutedRef, currentKeyRef, currentScaleRef, getStepTime]);
 
   const start = useCallback(() => {
     initAudio();
@@ -90,7 +91,10 @@ export function useSequencer({
             const step = currentStepRef.current;
 
             instruments.forEach((inst) => {
-              if (gridRef.current[inst.id][step] && !mutedRef.current[inst.id]) {
+              if (
+                gridRef.current[inst.id][step] &&
+                !mutedRef.current[inst.id]
+              ) {
                 playInstrument(
                   inst.id,
                   nextNoteTimeRef.current,
@@ -102,9 +106,12 @@ export function useSequencer({
             });
 
             const scheduledTime = nextNoteTimeRef.current;
-            setTimeout(() => {
-              setCurrentStep(step);
-            }, (scheduledTime - ctx.currentTime) * 1000);
+            setTimeout(
+              () => {
+                setCurrentStep(step);
+              },
+              (scheduledTime - ctx.currentTime) * 1000,
+            );
 
             nextNoteTimeRef.current += getStepTime(currentStepRef.current);
           }
