@@ -66,6 +66,7 @@ export function useSequencer({
         if (isPlayingRef.current) {
           setCurrentStep(step);
         }
+        uiTimeoutsRef.current.delete(timeoutId);
       }, (scheduledTime - ctx.currentTime) * 1000);
       uiTimeoutsRef.current.add(timeoutId);
 
@@ -112,6 +113,7 @@ export function useSequencer({
               if (isPlayingRef.current) {
                 setCurrentStep(step);
               }
+              uiTimeoutsRef.current.delete(timeoutId);
             }, (scheduledTime - ctx.currentTime) * 1000);
             uiTimeoutsRef.current.add(timeoutId);
 
