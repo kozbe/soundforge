@@ -29,6 +29,7 @@ export function useSequencer({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const nextNoteTimeRef = useRef(0);
   const currentStepRef = useRef(-1);
+  const isPlayingRef = useRef(false);
   const uiTimeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
   const getStepTime = useCallback((step: number) => {
@@ -63,7 +64,9 @@ export function useSequencer({
       const scheduledTime = nextNoteTimeRef.current;
       const timeoutId = setTimeout(() => {
         uiTimeoutsRef.current.delete(timeoutId);
-        setCurrentStep(step);
+        if (isPlayingRef.current) {
+          setCurrentStep(step);
+        }
       }, (scheduledTime - ctx.currentTime) * 1000);
       uiTimeoutsRef.current.add(timeoutId);
 
@@ -80,6 +83,7 @@ export function useSequencer({
     if (!ctx) return;
     currentStepRef.current = -1;
     nextNoteTimeRef.current = ctx.currentTime;
+    isPlayingRef.current = true;
     setIsPlaying(true);
     setCurrentStep(-1);
 
@@ -107,7 +111,9 @@ export function useSequencer({
             const scheduledTime = nextNoteTimeRef.current;
             const timeoutId = setTimeout(() => {
               uiTimeoutsRef.current.delete(timeoutId);
-              setCurrentStep(step);
+              if (isPlayingRef.current) {
+                setCurrentStep(step);
+              }
             }, (scheduledTime - ctx.currentTime) * 1000);
             uiTimeoutsRef.current.add(timeoutId);
 
@@ -122,6 +128,7 @@ export function useSequencer({
   }, [gridRef, mutedRef, currentKeyRef, currentScaleRef, getStepTime]);
 
   const stop = useCallback(() => {
+    isPlayingRef.current = false;
     setIsPlaying(false);
     setCurrentStep(-1);
     currentStepRef.current = -1;
