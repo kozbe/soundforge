@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { learnContent } from '../../data/instruments';
+import { parseDetailContent } from '../../utils/parseDetailContent';
 import styles from './Sidebar.module.css';
 
 export function LearnTab() {
@@ -17,10 +18,9 @@ export function LearnTab() {
             {item.title} <span className={styles.tag}>{item.tag}</span>
           </h3>
           <p>{item.summary}</p>
-          <div
-            className={styles.detail}
-            dangerouslySetInnerHTML={{ __html: item.detail.replace(/\n/g, '<br>') }}
-          />
+          <div className={styles.detail}>
+            {parseDetailContent(item.detail)}
+          </div>
         </div>
       ))}
     </>
