@@ -62,6 +62,7 @@ export function useSequencer({
 
       const scheduledTime = nextNoteTimeRef.current;
       const timeoutId = setTimeout(() => {
+        uiTimeoutsRef.current.delete(timeoutId);
         setCurrentStep(step);
       }, (scheduledTime - ctx.currentTime) * 1000);
       uiTimeoutsRef.current.add(timeoutId);
@@ -105,6 +106,7 @@ export function useSequencer({
 
             const scheduledTime = nextNoteTimeRef.current;
             const timeoutId = setTimeout(() => {
+              uiTimeoutsRef.current.delete(timeoutId);
               setCurrentStep(step);
             }, (scheduledTime - ctx.currentTime) * 1000);
             uiTimeoutsRef.current.add(timeoutId);
