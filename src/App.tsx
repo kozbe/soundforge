@@ -47,6 +47,7 @@ export default function App() {
   // Refs for the sequencer (avoids stale closures)
   const gridRef = useRef(grid);
   const mutedRef = useRef(muted);
+  const volumesRef = useRef(volumes);
   const bpmRef = useRef(bpm);
   const swingRef = useRef(swing);
   const currentKeyRef = useRef(currentKey);
@@ -54,6 +55,7 @@ export default function App() {
 
   gridRef.current = grid;
   mutedRef.current = muted;
+  volumesRef.current = volumes;
   bpmRef.current = bpm;
   swingRef.current = swing;
   currentKeyRef.current = currentKey;
@@ -62,6 +64,7 @@ export default function App() {
   const { isPlaying, currentStep, toggle, start } = useSequencer({
     gridRef,
     mutedRef,
+    volumesRef,
     bpmRef,
     swingRef,
     currentKeyRef,
@@ -80,7 +83,7 @@ export default function App() {
         if (newSteps[step]) {
           const ctx = getAudioContext();
           if (ctx) {
-            playInstrument(instId, ctx.currentTime, step, currentKeyRef.current, currentScaleRef.current);
+            playInstrument(instId, ctx.currentTime, step, currentKeyRef.current, currentScaleRef.current, volumesRef.current[instId]);
           }
         }
 

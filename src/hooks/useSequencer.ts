@@ -10,6 +10,7 @@ import { instruments, STEPS } from '../data/instruments';
 interface UseSequencerProps {
   gridRef: React.MutableRefObject<Record<string, boolean[]>>;
   mutedRef: React.MutableRefObject<Record<string, boolean>>;
+  volumesRef: React.MutableRefObject<Record<string, number>>;
   bpmRef: React.MutableRefObject<number>;
   swingRef: React.MutableRefObject<number>;
   currentKeyRef: React.MutableRefObject<number>;
@@ -19,6 +20,7 @@ interface UseSequencerProps {
 export function useSequencer({
   gridRef,
   mutedRef,
+  volumesRef,
   bpmRef,
   swingRef,
   currentKeyRef,
@@ -55,6 +57,7 @@ export function useSequencer({
             step,
             currentKeyRef.current,
             currentScaleRef.current,
+            volumesRef.current[inst.id],
           );
         }
       });
@@ -68,7 +71,7 @@ export function useSequencer({
     }
 
     timerRef.current = setTimeout(scheduler, 25);
-  }, [gridRef, mutedRef, currentKeyRef, currentScaleRef, getStepTime]);
+  }, [gridRef, mutedRef, volumesRef, currentKeyRef, currentScaleRef, getStepTime]);
 
   const start = useCallback(() => {
     initAudio();
@@ -97,6 +100,7 @@ export function useSequencer({
                   step,
                   currentKeyRef.current,
                   currentScaleRef.current,
+                  volumesRef.current[inst.id],
                 );
               }
             });
@@ -114,7 +118,7 @@ export function useSequencer({
       }
     };
     runScheduler();
-  }, [gridRef, mutedRef, currentKeyRef, currentScaleRef, getStepTime]);
+  }, [gridRef, mutedRef, volumesRef, currentKeyRef, currentScaleRef, getStepTime]);
 
   const stop = useCallback(() => {
     setIsPlaying(false);
