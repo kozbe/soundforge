@@ -29,32 +29,28 @@ export function parseDetailContent(content: string): ReactNode[] {
     }
 
     // Parse <strong> tags within the line
-    const parts: ReactNode[] = [];
+    // Use [^<]* instead of .*? to prevent nested tags from being captured
     let currentIndex = 0;
-    const strongRegex = /<strong>(.*?)<\/strong>/g;
+    const strongRegex = /<strong>([^<]*)<\/strong>/g;
     let match;
 
     while ((match = strongRegex.exec(line)) !== null) {
       // Add text before the <strong> tag
       if (match.index > currentIndex) {
-        parts.push(line.substring(currentIndex, match.index));
+        result.push(line.substring(currentIndex, match.index));
       }
 
       // Add the <strong> content
-      parts.push(<strong key={`strong-${key++}`}>{match[1]}</strong>);
+      result.push(<strong key={`strong-${key++}`}>{match[1]}</strong>);
 
       currentIndex = match.index + match[0].length;
     }
 
     // Add remaining text after last <strong> tag
     if (currentIndex < line.length) {
-      parts.push(line.substring(currentIndex));
-    }
-
-    // If we found any parts, add them; otherwise add the whole line
-    if (parts.length > 0) {
-      parts.forEach((part) => result.push(part));
-    } else {
+      result.push(line.substring(currentIndex));
+    } else if (currentIndex === 0) {
+      // No <strong> tags were found, add the whole line
       result.push(line);
     }
   });
