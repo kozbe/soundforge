@@ -40,6 +40,7 @@ export function Header({ bpm, isPlaying, onBpmChange, onTogglePlay }: HeaderProp
                 onBpmChange(parsed);
               }
             }}
+            onBlur={() => setInputValue(String(bpm))}
           />
         </div>
         <button
