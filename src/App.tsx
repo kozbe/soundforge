@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { instruments, STEPS, type Preset } from './data/instruments';
-import { initAudio, playNote, playInstrument, getAudioContext } from './audio/audioEngine';
+import { initAudio, playInstrument, getAudioContext } from './audio/audioEngine';
 import { useSequencer } from './hooks/useSequencer';
 import {
   savePattern,
@@ -218,29 +218,16 @@ export default function App() {
 
   // Keyboard shortcuts
   useEffect(() => {
-    const keyboardMap: Record<string, number> = {
-      a: 0, w: 1, s: 2, e: 3, d: 4, f: 5, t: 6,
-      g: 7, y: 8, h: 9, u: 10, j: 11, k: 12,
-    };
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === ' ') {
         e.preventDefault();
         toggle();
-        return;
-      }
-
-      const noteOffset = keyboardMap[e.key.toLowerCase()];
-      if (noteOffset !== undefined && !e.repeat) {
-        const note = noteOffset % 12;
-        const oct = currentOctave + (noteOffset >= 12 ? 1 : 0);
-        playNote(note, oct);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [currentOctave, toggle]);
+  }, [toggle]);
 
   return (
     <div className={styles.app}>
