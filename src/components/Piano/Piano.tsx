@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { NOTE_NAMES, getScaleNotes, getChords } from '../../data/musicTheory';
 import { playNote, playChord } from '../../audio/audioEngine';
+import { usePianoKeyboard } from '../../hooks/usePianoKeyboard';
 import styles from './Piano.module.css';
 
 interface PianoProps {
@@ -11,6 +12,7 @@ interface PianoProps {
 }
 
 export function Piano({ currentKey, currentScale, currentOctave, onOctaveChange }: PianoProps) {
+  const pressedKeys = usePianoKeyboard(currentOctave);
   const scaleNotes = getScaleNotes(currentKey, currentScale);
   const chords = getChords(currentKey, currentScale);
 
@@ -38,7 +40,7 @@ export function Piano({ currentKey, currentScale, currentOctave, onOctaveChange 
     pianoKeys.push(
       <div
         key={i}
-        className={`${styles.pianoKey} ${isBlack ? styles.black : styles.white} ${inScale ? styles.inScale : ''}`}
+        className={`${styles.pianoKey} ${isBlack ? styles.black : styles.white} ${inScale ? styles.inScale : ''} ${pressedKeys.has(i) ? styles.active : ''}`}
         onMouseDown={() => handleKeyClick(noteIdx, octave)}
       >
         {!isBlack && NOTE_NAMES[noteIdx]}

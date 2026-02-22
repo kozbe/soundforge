@@ -99,7 +99,8 @@
   border-radius: 0 0 4px 4px;
 }
 
-.pianoKey:active {
+.pianoKey:active,
+.pianoKey.active {
   transform: scaleY(0.98);
   filter: brightness(0.85);
 }
