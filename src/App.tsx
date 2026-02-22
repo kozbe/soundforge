@@ -80,7 +80,7 @@ export default function App() {
         newSteps[step] = !newSteps[step];
         newGrid[instId] = newSteps;
 
-        if (newSteps[step]) {
+        if (newSteps[step] && !mutedRef.current[instId]) {
           const ctx = getAudioContext();
           if (ctx) {
             playInstrument(instId, ctx.currentTime, step, currentKeyRef.current, currentScaleRef.current, volumesRef.current[instId]);
