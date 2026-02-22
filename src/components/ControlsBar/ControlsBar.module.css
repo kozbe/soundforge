@@ -79,6 +79,22 @@
   color: var(--kick);
 }
 
+.actionBtn {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.actionBtn:hover {
+  border-color: var(--accent);
+  color: #fff;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.shareBtn {
+  margin-left: 0;
+}
+
 .randomBtn {
   margin-left: 0;
 }

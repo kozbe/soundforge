@@ -10,6 +10,8 @@ interface ControlsBarProps {
   onSwingChange: (swing: number) => void;
   onClear: () => void;
   onRandom: () => void;
+  onSave: () => void;
+  onShare: () => void;
 }
 
 export function ControlsBar({
@@ -21,6 +23,8 @@ export function ControlsBar({
   onSwingChange,
   onClear,
   onRandom,
+  onSave,
+  onShare,
 }: ControlsBarProps) {
   return (
     <div className={styles.controlsBar}>
@@ -65,6 +69,12 @@ export function ControlsBar({
         />
         <span className={styles.swingVal}>{swing}%</span>
       </div>
+      <button className={`${styles.clearBtn} ${styles.actionBtn}`} onClick={onSave}>
+        Save
+      </button>
+      <button className={`${styles.clearBtn} ${styles.actionBtn} ${styles.shareBtn}`} onClick={onShare}>
+        Share
+      </button>
       <button className={styles.clearBtn} onClick={onClear}>
         Clear All
       </button>
