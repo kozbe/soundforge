@@ -23,14 +23,14 @@ export function getAudioContext(): AudioContext | null {
   return audioCtx;
 }
 
-function playKick(time: number) {
+function playKick(time: number, volume = 1) {
   if (!audioCtx || !masterGain) return;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.type = 'sine';
   osc.frequency.setValueAtTime(160, time);
   osc.frequency.exponentialRampToValueAtTime(40, time + 0.12);
-  gain.gain.setValueAtTime(1, time);
+  gain.gain.setValueAtTime(volume, time);
   gain.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
   osc.connect(gain);
   gain.connect(masterGain);
@@ -38,7 +38,7 @@ function playKick(time: number) {
   osc.stop(time + 0.3);
 }
 
-function playSnare(time: number) {
+function playSnare(time: number, volume = 1) {
   if (!audioCtx || !masterGain) return;
   const bufferSize = audioCtx.sampleRate * 0.1;
   const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -48,7 +48,7 @@ function playSnare(time: number) {
   noise.buffer = buffer;
 
   const noiseGain = audioCtx.createGain();
-  noiseGain.gain.setValueAtTime(0.6, time);
+  noiseGain.gain.setValueAtTime(0.6 * volume, time);
   noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
 
   const filter = audioCtx.createBiquadFilter();
@@ -66,7 +66,7 @@ function playSnare(time: number) {
   osc.type = 'triangle';
   osc.frequency.setValueAtTime(200, time);
   osc.frequency.exponentialRampToValueAtTime(80, time + 0.05);
-  oscGain.gain.setValueAtTime(0.5, time);
+  oscGain.gain.setValueAtTime(0.5 * volume, time);
   oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
   osc.connect(oscGain);
   oscGain.connect(masterGain);
@@ -74,7 +74,7 @@ function playSnare(time: number) {
   osc.stop(time + 0.08);
 }
 
-function playHiHat(time: number) {
+function playHiHat(time: number, volume = 1) {
   if (!audioCtx || !masterGain) return;
   const bufferSize = audioCtx.sampleRate * 0.05;
   const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
@@ -84,7 +84,7 @@ function playHiHat(time: number) {
   noise.buffer = buffer;
 
   const gain = audioCtx.createGain();
-  gain.gain.setValueAtTime(0.3, time);
+  gain.gain.setValueAtTime(0.3 * volume, time);
   gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
 
   const hp = audioCtx.createBiquadFilter();
@@ -111,6 +111,7 @@ export function playTone(
   duration = 0.15,
   attack = 0.01,
   release = 0.1,
+  volume = 1,
 ) {
   if (!audioCtx || !masterGain) return;
   const freq = noteFreq(note, octave);
@@ -119,7 +120,7 @@ export function playTone(
   osc.type = type;
   osc.frequency.value = freq;
   gain.gain.setValueAtTime(0, time);
-  gain.gain.linearRampToValueAtTime(0.3, time + attack);
+  gain.gain.linearRampToValueAtTime(0.3 * volume, time + attack);
   gain.gain.linearRampToValueAtTime(0.001, time + duration);
   osc.connect(gain);
   gain.connect(masterGain);
@@ -127,14 +128,14 @@ export function playTone(
   osc.stop(time + duration + 0.01);
 }
 
-function playFX(time: number) {
+function playFX(time: number, volume = 1) {
   if (!audioCtx || !masterGain) return;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.type = 'sawtooth';
   osc.frequency.setValueAtTime(800, time);
   osc.frequency.exponentialRampToValueAtTime(200, time + 0.2);
-  gain.gain.setValueAtTime(0.15, time);
+  gain.gain.setValueAtTime(0.15 * volume, time);
   gain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
   osc.connect(gain);
   gain.connect(masterGain);
@@ -148,39 +149,40 @@ export function playInstrument(
   step: number,
   currentKey: number,
   currentScale: string,
+  volume = 1,
 ) {
   switch (instId) {
     case 'kick':
-      playKick(time);
+      playKick(time, volume);
       break;
     case 'snare':
-      playSnare(time);
+      playSnare(time, volume);
       break;
     case 'hihat':
-      playHiHat(time);
+      playHiHat(time, volume);
       break;
     case 'bass': {
       const n = getStepNote('bass', step, currentKey, currentScale);
-      playTone(n.note, n.octave, time, 'sawtooth', 0.2, 0.005, 0.15);
+      playTone(n.note, n.octave, time, 'sawtooth', 0.2, 0.005, 0.15, volume);
       break;
     }
     case 'synth1': {
       const n = getStepNote('synth1', step, currentKey, currentScale);
-      playTone(n.note, n.octave, time, 'square', 0.15, 0.01, 0.1);
+      playTone(n.note, n.octave, time, 'square', 0.15, 0.01, 0.1, volume);
       break;
     }
     case 'synth2': {
       const n = getStepNote('synth2', step, currentKey, currentScale);
-      playTone(n.note, n.octave, time, 'triangle', 0.12, 0.005, 0.08);
+      playTone(n.note, n.octave, time, 'triangle', 0.12, 0.005, 0.08, volume);
       break;
     }
     case 'pad': {
       const n = getStepNote('pad', step, currentKey, currentScale);
-      playTone(n.note, n.octave, time, 'sine', 0.5, 0.05, 0.3);
+      playTone(n.note, n.octave, time, 'sine', 0.5, 0.05, 0.3, volume);
       break;
     }
     case 'fx':
-      playFX(time);
+      playFX(time, volume);
       break;
   }
 }

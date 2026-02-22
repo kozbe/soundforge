@@ -10,6 +10,7 @@ import { instruments, STEPS } from '../data/instruments';
 interface UseSequencerProps {
   gridRef: React.MutableRefObject<Record<string, boolean[]>>;
   mutedRef: React.MutableRefObject<Record<string, boolean>>;
+  volumesRef: React.MutableRefObject<Record<string, number>>;
   bpmRef: React.MutableRefObject<number>;
   swingRef: React.MutableRefObject<number>;
   currentKeyRef: React.MutableRefObject<number>;
@@ -19,6 +20,7 @@ interface UseSequencerProps {
 export function useSequencer({
   gridRef,
   mutedRef,
+  volumesRef,
   bpmRef,
   swingRef,
   currentKeyRef,
@@ -32,14 +34,17 @@ export function useSequencer({
   const isPlayingRef = useRef(false);
   const uiTimeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
-  const getStepTime = useCallback((step: number) => {
-    const beatTime = 60.0 / bpmRef.current / 4;
-    const swingAmount = swingRef.current / 100;
-    if (step % 2 === 1) {
-      return beatTime * (1 + swingAmount * 0.5);
-    }
-    return beatTime * (1 - swingAmount * 0.25);
-  }, [bpmRef, swingRef]);
+  const getStepTime = useCallback(
+    (step: number) => {
+      const beatTime = 60.0 / bpmRef.current / 4;
+      const swingAmount = swingRef.current / 100;
+      if (step % 2 === 1) {
+        return beatTime * (1 + swingAmount * 0.5);
+      }
+      return beatTime * (1 - swingAmount * 0.25);
+    },
+    [bpmRef, swingRef],
+  );
 
   const scheduler = useCallback(() => {
     const ctx = getAudioContext();
@@ -62,12 +67,15 @@ export function useSequencer({
       });
 
       const scheduledTime = nextNoteTimeRef.current;
-      const timeoutId = setTimeout(() => {
-        if (isPlayingRef.current) {
-          setCurrentStep(step);
-        }
-        uiTimeoutsRef.current.delete(timeoutId);
-      }, (scheduledTime - ctx.currentTime) * 1000);
+      const timeoutId = setTimeout(
+        () => {
+          if (isPlayingRef.current) {
+            setCurrentStep(step);
+          }
+          uiTimeoutsRef.current.delete(timeoutId);
+        },
+        (scheduledTime - ctx.currentTime) * 1000,
+      );
       uiTimeoutsRef.current.add(timeoutId);
 
       nextNoteTimeRef.current += getStepTime(currentStepRef.current);
@@ -97,24 +105,31 @@ export function useSequencer({
             const step = currentStepRef.current;
 
             instruments.forEach((inst) => {
-              if (gridRef.current[inst.id][step] && !mutedRef.current[inst.id]) {
+              if (
+                gridRef.current[inst.id][step] &&
+                !mutedRef.current[inst.id]
+              ) {
                 playInstrument(
                   inst.id,
                   nextNoteTimeRef.current,
                   step,
                   currentKeyRef.current,
                   currentScaleRef.current,
+                  volumesRef.current[inst.id],
                 );
               }
             });
 
             const scheduledTime = nextNoteTimeRef.current;
-            const timeoutId = setTimeout(() => {
-              if (isPlayingRef.current) {
-                setCurrentStep(step);
-              }
-              uiTimeoutsRef.current.delete(timeoutId);
-            }, (scheduledTime - ctx.currentTime) * 1000);
+            const timeoutId = setTimeout(
+              () => {
+                if (isPlayingRef.current) {
+                  setCurrentStep(step);
+                }
+                uiTimeoutsRef.current.delete(timeoutId);
+              },
+              (scheduledTime - ctx.currentTime) * 1000,
+            );
             uiTimeoutsRef.current.add(timeoutId);
 
             nextNoteTimeRef.current += getStepTime(currentStepRef.current);
@@ -125,7 +140,14 @@ export function useSequencer({
       }
     };
     runScheduler();
-  }, [gridRef, mutedRef, currentKeyRef, currentScaleRef, getStepTime]);
+  }, [
+    gridRef,
+    mutedRef,
+    volumesRef,
+    currentKeyRef,
+    currentScaleRef,
+    getStepTime,
+  ]);
 
   const stop = useCallback(() => {
     isPlayingRef.current = false;
