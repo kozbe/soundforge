@@ -118,6 +118,262 @@
   color: var(--text);
 }
 
+/* ---- Lesson styles ---- */
+
+.lessonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lessonProgressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lessonProgressLabel {
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.lessonProgressCount {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.lessonProgressBar {
+  height: 4px;
+  background: var(--surface3);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.lessonProgressFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.lessonList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lessonCard {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.lessonCard:not(.lessonLocked):hover {
+  border-color: var(--accent);
+}
+
+.lessonDone {
+  border-color: #44ff88 !important;
+}
+
+.lessonLocked {
+  opacity: 0.5;
+}
+
+.lessonHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  gap: 8px;
+}
+
+.lessonHeader:disabled {
+  cursor: not-allowed;
+}
+
+.lessonTitleText {
+  flex: 1;
+}
+
+.lessonHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.lockIcon {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: rgba(136, 136, 170, 0.15);
+  color: var(--text-dim);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.doneIcon {
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(68, 255, 136, 0.15);
+  color: #44ff88;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.chevron {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.lessonBody {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.lessonDesc {
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  padding: 10px 0;
+}
+
+.lessonCollapsedHint {
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 0 16px 12px;
+  line-height: 1.5;
+}
+
+.challengeList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.challenge {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.challengeDone {
+  border-color: #44ff88;
+  background: rgba(68, 255, 136, 0.07);
+}
+
+.challengePassing {
+  border-color: var(--accent);
+  background: rgba(255, 107, 61, 0.07);
+}
+
+.challengeTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.challengeNum {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.challengeDone .challengeNum {
+  background: #44ff88;
+  color: #0a0a0f;
+}
+
+.challengePassing .challengeNum {
+  background: var(--accent);
+  color: #fff;
+}
+
+.challengeInstruction {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.challengeStatus {
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #44ff88;
+}
+
+.challengePassing .challengeStatus {
+  color: var(--accent);
+}
+
+.challengeHint {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.challengePassed {
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-style: italic;
+}
+
+.resetBtn {
+  margin-top: 4px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-align: center;
+  font-family: 'Sora', sans-serif;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.resetBtn:hover {
+  color: var(--text);
+}
+
+/* ---- Presets styles ---- */
+
 .presetBtn {
   display: block;
   width: 100%;
