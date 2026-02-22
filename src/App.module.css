@@ -1,0 +1,38 @@
+.app {
+  position: relative;
+  z-index: 1;
+}
+
+.main {
+  display: flex;
+  height: calc(100vh - 75px);
+}
+
+.gridWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gridArea {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+}
+
+.gridArea::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.gridArea::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+@media (max-width: 900px) {
+  .main {
+    flex-direction: column;
+  }
+}
