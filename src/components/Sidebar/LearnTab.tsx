@@ -22,8 +22,12 @@ export function LearnTab({ grid }: LearnTabProps) {
       let updated = false;
       const newCompleted = [...prev.completedChallenges];
 
-      for (const lesson of lessons) {
-        for (const challenge of lesson.challenges) {
+      for (let idx = 0; idx < lessons.length; idx++) {
+        // Skip locked lessons – a lesson is locked if the previous one isn't fully done
+        if (idx > 0 && !lessons[idx - 1].challenges.every((c) => newCompleted.includes(c.id))) {
+          break;
+        }
+        for (const challenge of lessons[idx].challenges) {
           if (!newCompleted.includes(challenge.id) && challenge.validate(grid)) {
             newCompleted.push(challenge.id);
             updated = true;
@@ -78,7 +82,7 @@ export function LearnTab({ grid }: LearnTabProps) {
       <div className={styles.lessonProgressBar}>
         <div
           className={styles.lessonProgressFill}
-          style={{ width: `${Math.min(100, (completedCount / totalChallenges) * 100)}%` }}
+          style={{ width: `${totalChallenges > 0 ? Math.min((completedCount / totalChallenges) * 100, 100) : 0}%` }}
         />
       </div>
 
