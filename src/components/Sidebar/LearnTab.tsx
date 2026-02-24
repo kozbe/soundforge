@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { lessons } from '../../data/lessons';
 import {
   getLessonProgress,
@@ -56,9 +56,15 @@ export function LearnTab({ grid }: LearnTabProps) {
     return isLessonComplete(lessons[lessonIdx - 1].id);
   };
 
-  const allChallengeIds = new Set(lessons.flatMap((l) => l.challenges.map((c) => c.id)));
-  const totalChallenges = allChallengeIds.size;
-  const completedCount = progress.completedChallenges.filter((id) => allChallengeIds.has(id)).length;
+  const totalChallenges = lessons.reduce((sum, l) => sum + l.challenges.length, 0);
+  const knownChallengeIds = useMemo(
+    () => new Set(lessons.flatMap((l) => l.challenges.map((c) => c.id))),
+    [],
+  );
+  const completedCount = useMemo(
+    () => progress.completedChallenges.filter((id) => knownChallengeIds.has(id)).length,
+    [progress.completedChallenges, knownChallengeIds],
+  );
 
   const handleReset = () => {
     resetLessonProgress();
