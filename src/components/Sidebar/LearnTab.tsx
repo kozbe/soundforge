@@ -52,8 +52,9 @@ export function LearnTab({ grid }: LearnTabProps) {
     return isLessonComplete(lessons[lessonIdx - 1].id);
   };
 
-  const totalChallenges = lessons.reduce((sum, l) => sum + l.challenges.length, 0);
-  const completedCount = progress.completedChallenges.length;
+  const allChallengeIds = new Set(lessons.flatMap((l) => l.challenges.map((c) => c.id)));
+  const totalChallenges = allChallengeIds.size;
+  const completedCount = progress.completedChallenges.filter((id) => allChallengeIds.has(id)).length;
 
   const handleReset = () => {
     resetLessonProgress();
@@ -71,7 +72,7 @@ export function LearnTab({ grid }: LearnTabProps) {
       <div className={styles.lessonProgressBar}>
         <div
           className={styles.lessonProgressFill}
-          style={{ width: `${(completedCount / totalChallenges) * 100}%` }}
+          style={{ width: `${totalChallenges > 0 ? Math.min((completedCount / totalChallenges) * 100, 100) : 0}%` }}
         />
       </div>
 
