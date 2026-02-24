@@ -7,11 +7,12 @@ import styles from './Sidebar.module.css';
 
 interface SidebarProps {
   onLoadPreset: (preset: Preset) => void;
+  grid: Record<string, boolean[]>;
 }
 
 type Tab = 'learn' | 'presets' | 'tips';
 
-export function Sidebar({ onLoadPreset }: SidebarProps) {
+export function Sidebar({ onLoadPreset, grid }: SidebarProps) {
   const [activeTab, setActiveTab] = useState<Tab>('learn');
 
   const tabs: { id: Tab; label: string }[] = [
@@ -34,7 +35,7 @@ export function Sidebar({ onLoadPreset }: SidebarProps) {
         ))}
       </div>
       <div className={styles.sidebarContent}>
-        {activeTab === 'learn' && <LearnTab />}
+        {activeTab === 'learn' && <LearnTab grid={grid} />}
         {activeTab === 'presets' && <PresetsTab onLoadPreset={onLoadPreset} />}
         {activeTab === 'tips' && <TipsTab />}
       </div>

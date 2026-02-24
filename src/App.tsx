@@ -239,7 +239,7 @@ export default function App() {
       />
       <Visualizer />
       <div className={styles.main}>
-        <Sidebar onLoadPreset={handleLoadPreset} />
+        <Sidebar onLoadPreset={handleLoadPreset} grid={grid} />
         <div className={styles.gridWrapper}>
           <ControlsBar
             currentKey={currentKey}
